@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+	<!-- -->
+	<!-- log -->
+	<!-- -->
+	<appender name="integratorlog" class="com.generic.util.GenericDatedFileAppender">
+		<param name="logDirectory" value="../logs" />
+		<param name="logPrefix" value="RenameIt" />
+		<param name="maxFileSize" value="200" />
+		<param name="CompressBackups" value="true" />
+		<param name="MaxNumberOfDays" value="15" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{HH:mm:ss,SSS} %c %t %-5p: %m%n" />
+		</layout>
+	</appender>
+
+	<!-- -->
+	<!-- Error.log -->
+	<!-- -->
+	<appender name="errorlog" class="com.generic.util.GenericDatedFileAppender">
+		<param name="logDirectory" value="logs" />
+		<param name="logPrefix" value="RenameIt_Error" />
+		<param name="maxFileSize" value="200" />
+		<param name="Threshold" value="ERROR" />
+		<param name="CompressBackups" value="true" />
+		<param name="MaxNumberOfDays" value="15" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{HH:mm:ss,SSS} %c %t %-5p: %m%n" />
+		</layout>
+	</appender>
+
+
+	<!-- -->
+	<!-- ConsoleAppender -->
+	<!-- -->
+	<appender name="stdout" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{HH:mm:ss,SSS} %c %t %-5p: %m%n" />
+		</layout>
+	</appender>
+
+
+	<logger name="org.apache">
+		<level value="info" />
+	</logger>
+	
+	<logger name="org.springframework">
+		<level value="info" />
+	</logger>
+
+	<root>
+		<level value="debug" />
+		<appender-ref ref="integratorlog" />
+		<appender-ref ref="errorlog" />
+	</root>
+
+</log4j:configuration>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<userInput>
+
+	<panel id="panel.internaldb">
+		<field type="staticText" txt="MetaTrader Settings" />
+		<field type="staticText" txt="--------------------"></field>
+
+		<field type="text" variable="mt.address">
+			<spec txt="MetaTrader Address" size="25" set="$mt.address" />
+			<validator class="com.izforge.izpack.util.NotEmptyValidator" txt="The 'MetaTrader Address' is mandatory!" />
+		</field>
+
+		<field type="text" variable="mt.port">
+			<spec txt="MetaTrader Port" size="6" set="$mt.port" />
+			<validator class="com.izforge.izpack.util.RegularExpressionValidator" txt="Invalid Port Number!">
+				<param name="pattern" value="([0-9])*" />
+			</validator>
+		</field>
+
+		<field type="text" variable="mt.username">
+			<spec txt="User Name" size="20" set="$mt.username" />
+			<validator class="com.izforge.izpack.util.NotEmptyValidator" txt="The 'User Name' is mandatory!" />
+		</field>
+
+		<field type="password" variable="mt.password">
+			<spec>
+				<pwd txt="Password" size="20" set="$mt.password" />
+			</spec>
+			<validator class="com.izforge.izpack.util.NotEmptyValidator" txt="The 'Password' is mandatory!" />
+		</field>
+
+		<field type="text" variable="mt.connection.checkinterval">
+			<spec txt="Connection Check Inteval (sec)" size="2" set="$mt.connection.check.interval" />
+			<validator class="com.izforge.izpack.util.NotEmptyValidator" txt="The 'Connection Check Inteval' is mandatory!" />
+		</field>
+
+		<field type="check" variable="install.service">
+			<spec txt="Install as windows service ?" true="true" false="false" set="true" />
+		</field>
+	</panel>
+
+
+	<panel id="panel.8.0">
+		<field type="staticText" txt="Installation has completed successfully." />
+		<field type="space" />
+		<field type="space" />
+		<field type="staticText" txt="An uninstaller program has been created in:" />
+		<field type="staticText" txt="$UNINSTALL_PATH" />
+	</panel>
+
+</userInput>

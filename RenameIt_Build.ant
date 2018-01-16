@@ -1,0 +1,120 @@
+<project name="TSMCacheServerInstaller" default="all" basedir=".">
+	<target name="all" depends="default" />
+
+	<property name="installerDir" location="${basedir}/installer" />
+	<property name="pack" location="${installerDir}/resources/pack" />
+	<property name="default" location="${installerDir}/resources/default" />
+	<property name="js" location="${installerDir}/jsmooth" />
+
+	<taskdef name="izpack" classpath="${installerDir}/lib/standalone-compiler.jar" classname="com.izforge.izpack.ant.IzPackTask" />
+	<taskdef name="jsmoothgen" classpath="${installerDir}/lib/jsmoothgen-ant.jar" classname="net.charabia.jsmoothgen.ant.JSmoothGen" />
+
+	<loadproperties srcfile="${basedir}/build.properties" />
+
+
+	<target name="folders">
+		<mkdir dir="${pack}" />
+		<mkdir dir="${pack}/bin" />
+		<mkdir dir="${pack}/lib" />
+		<mkdir dir="${pack}/logs" />
+		<mkdir dir="${pack}/tools" />
+		<mkdir dir="${pack}/xsl" />
+		<mkdir dir="${pack}/backup" />
+	</target>
+
+
+
+	<target name="build" depends="folders">
+		<jar destfile="${pack}/lib/TSMCacheServer.jar" basedir="${basedir}/bin" update="true" excludes="*.xml" includes="com/genius/**,com/genius/dss/**,com/genius/*.class,META-INF/**" />
+		<jar destfile="${installerDir}/lib/Installer.jar" basedir="${basedir}/bin" update="true" excludes="*.xml" includes="com/genius/installer/**" />
+	</target>
+
+
+	<target name="copy" depends="folders">
+		<copy todir="${pack}/bin" overwrite="true">
+			<fileset dir="${basedir}/distsrc/bin" excludes="*.local,*.jsmooth,*.png,*.gif,*.bck,*.win" />
+		</copy>
+
+		<copy todir="${pack}/xsl" overwrite="true">
+			<fileset dir="${basedir}/distsrc/xsl" includes="*.xsl" />
+		</copy>
+
+		<copy todir="${pack}/lib" overwrite="true">
+			<fileset dir="${basedir}/distsrc/lib" includes="*.jar" />
+		</copy>
+
+		<copy todir="${pack}/tools" overwrite="true">
+			<fileset dir="${basedir}/distsrc/tools" />
+		</copy>
+
+		<copy todir="${pack}/bin" file="${basedir}/src/version.properties"></copy>
+		
+		<copy todir="${pack}/tools" file="${basedir}/distsrc/tools/baretail.exe" />
+		
+	</target>
+
+
+	<target name="version">
+		<propertyfile file="${basedir}/src/version.properties">
+			<entry key="version" type="int" value="1" pattern="0" />
+			<entry key="subversion" type="int" value="0" pattern="0" />
+			<entry key="build.date" type="date" value="now" pattern="dd/MM/yyyy" />
+			<entry key="build.number" type="int" default="0" pattern="0000" operation="+" />
+		</propertyfile>
+	</target>
+
+	<target name="make-home">
+		<delete dir="${installerDir}/build" />
+		<mkdir dir="${installerDir}/build" />
+		<delete dir="${pack}" />
+		<mkdir dir="${pack}" />
+	</target>
+
+
+	<target name="organize-pack" depends="folders,build,copy">
+		<copy todir="${pack}" overwrite="true">
+			<fileset dir="${default}" includes="**" />
+		</copy>
+	</target>
+
+	<target name="create-jsmooth-files">
+		<java classname="com.genius.installer.ant.CreateJsmoothFiles" failonerror="true" fork="true">
+			<arg value="${installer}-${version}.${subversion}.${build.number}" />
+			<arg value="${installerDir}" />
+			<classpath>
+				<pathelement location="${installerDir}/lib/Installer.jar" />
+			</classpath>
+		</java>
+	</target>
+
+	<target name="izpack">
+		<izpack input="${installerDir}/resources/${installer}.xml" output="${js}/${installer}-${version}.${subversion}.${build.number}.jar" installerType="standard" inheritAll="true" basedir="${installerDir}/resources" compression="deflate" compressionlevel="9" />
+	</target>
+
+	<target name="setup-exe">
+		<jsmoothgen project="${js}/installer.jsmooth" skeletonroot="${js}/skeletons" />
+		<move file="${js}/${installer}-${version}.${subversion}.${build.number}.exe" todir="${installerDir}/build/Setup" />
+		<move file="${js}/${installer}-${version}.${subversion}.${build.number}.jar" todir="${installerDir}/build/Setup" />
+	</target>
+
+	<target name="clean">
+		<delete file="${installerDir}/build/Setup/${installer}-${version}.${subversion}.${build.number}.jar" />
+	</target>
+
+	<target name="run">
+		<java jar="${installerDir}/build/${installer}-${version}.${subversion}.${build.number}.jar" fork="true" />
+	</target>
+
+	<target name="default">
+		<antcall target="version" />
+		<loadproperties srcfile="${basedir}/src/version.properties" />
+
+		<antcall target="make-home" />
+		<antcall target="organize-pack" />
+		<antcall target="create-jsmooth-files" />
+		<antcall target="izpack" />
+		<antcall target="setup-exe" />
+		<antcall target="clean" />
+
+	</target>
+</project>

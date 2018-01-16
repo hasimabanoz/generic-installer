@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<processing>
+
+	<job name="copy jre">
+		<executeclass name="com.generic.installer.process.CopyJREProcess" />
+	</job>
+
+	<!-- <job name="encrypt password" > <executeclass name="com.genius.installer.process.EncryptPasswordProcess" /> </job> -->
+
+	<job name="properties setter">
+		<executeclass name="com.generic.installer.process.SetPropertiesProcess" />
+	</job>
+
+	<job name="batch files replace">
+		<executeclass name="com.generic.installer.process.ReplaceVariablesProcess" />
+	</job>
+
+	<job name="install service">
+		<os family="windows" />
+		<executeclass name="com.generic.installer.process.WindowsServiceProcess">
+			<arg>install</arg>
+		</executeclass>
+	</job>
+</processing>
